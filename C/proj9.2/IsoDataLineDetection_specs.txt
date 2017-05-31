@@ -1,0 +1,168 @@
+Project: 9.1 Points extraction from a binary image.
+         9.2  Isodata clustering problem, given K
+
+
+**************************************
+Language:  C++ & Java for both 9.1 and 9.2
+Due date:  C++ soft copy: 4/19/2017 Wednesday before Midnight
+Due date:  Java soft copy: 4/21/2017 Friday before Midnight
+Due date:  C++ & Java hard copy: 4/25/2017 Tuesday in class
+
+
+****** Project 9.1 ***************
+  I. Input (use argv): a binary image.
+
+  II. Output (use argv): a text file with the following format:
+The first text line is the cluster number, K.
+The second text line is number of points in the data set
+The third text line is the dimension (#of rows and # of columns) of the image, follows by a list of points in x-y coordinates.
+	For example:
+
+		25  	// 25 data points 
+		40  50  // 40 rows and 50 columns of an image
+    		12  30 // the pixel is on row 12 and column 30
+     		10  21 // the pixel is on row 10 and column 21
+    		:	
+		:
+   III. Data structure (adapt  previous projects)
+
+   IV. Algorithm steps: 
+     Step 0: prepare skeleton of the program, include loading the image into array without framing.
+
+	Step 1: read the image array from left to right and top to bottom
+     Step 2: if (p(i, j) > 0
+                Write i and j to output file
+	Step 3: repeat step 1 and step 2 until all pixels are processed
+	Step 4: close all files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+********** project 9.2 **********
+
+I. inputs:
+Input-1: a text file. (From the output file of project 9.1, see the format in the above.
+/**The name of the input file should be: C++ in argv[1], Java argv[0].
+
+	Input-2: K, ask user from the console.
+
+*******************************
+II. Output-1: A text file with the following format.( Use argv, C++:argv[2], Java argv[1].
+The first text line is the cluster number, K.
+The second text line is number of points in the data set
+The third text line is the dimension (#of rows and # of columns) of the follows by the list of input points plus their cluster IDs.
+For example:
+
+	K     
+	25
+	40  50  // 40 rows and 50 columns of an image
+    	12  30  2 // the pixel is on row 12 and column 30 and its cluster ID is 2
+     	10  21  1 // the pixel is on row 10 and column 21 and its cluster ID is 1
+    		:	
+		:
+
+C. Output-2: A series of 2-D images, one per iteration. In the image array, if a pixel has a label, displays with its label, otherwise, display with a blank. 
+// The name of output-2 file should be: C++ in argv[3], Java argv[2].
+
+
+*******************************
+III. Data structure:
+*******************************
+- A Point class with following fields: 
+	- X-coordinate (int)
+	- Y-coordinate (int)
+	- ClusterID (int)
+	- Distance (double) the distance to its own best-fitted line.
+    Method:
+ 	A printPoint method to print the info of a given point
+
+- A K-IsoData class
+	- K (int) //ask user from the console
+	- struct of xyCoord
+	- X-coordinate (int)
+	- Y-coordinate (int)
+	- numPts (int)  
+	- pointSet[numPts] (Point) // to be dynamically allocated
+	- Centroids[K] (xyCoord) // to be dynamically allocated
+	- XX2ndMM[K] (double)  // to be dynamically allocated
+	- YY2ndMM[K] (double)  // to be dynamically allocated
+	- XY2ndMM[K] (double)  // to be dynamically allocated
+	- numRow (int)
+	- numCol (int)
+	- imageArray // a 2-D integer array that is dynamically allocated
+
+     Methods:
+	- loadPointSet method // read each point from input file and store it onto
+     				// the struct pointSet array.
+						
+	- assignLable method // assign each point a label from 1 to K
+					// sequentially in pointSet array.
+	- mapPoint2Image method // read each point from pointSet and its 
+				// label and map the label on the iamgeArray.
+
+	- IsoClustering method
+	- printPointSet 
+	- PrettyPrint    // Output the 2-D array of pixels with 
+			// their labels in output-2 file.
+			//(** pixel without label will display as a blank.)
+
+
+*******************************
+IV) IsoClustering Algorithm
+*******************************
+
+step 0:  
+- Open the input file
+- K  ask the use from console
+- numRow, numCol numPts  get from input file.
+- Dynamically allocate all 1-D and 2-D arrays accordingly
+ 	
+Step 1: call loadPointSet 
+Step 2: call assignLabel
+
+	   
+Step 3: call mapPoint2Image 
+Step 4: call PrettyPrint // output to output-2 
+step 5: For each subset, compute the centroid, XX, YY, XY moments 
+	// equations are given in class
+step 6: determine the “angle” of the best fitted line  passing the centroid. 
+	// equations are given in class
+Step 7:  repeat step 5 and step 6 until all K subsets are processed.
+
+step 8: 8.1: for each point, p(x,y), in the pointSet array
+	   	compute the K  orthogonal distance, dist, 
+		from p(x, y) to all best fitted lines.
+	// similar to the distance equation of Hough transform. 
+	// In Hough transform, the orthogonal distance is computed from the  
+	// origin to the line of a given angle.
+	// Here, the origin is (x, y), so, you just need to use x and y as    
+	// the 	origin.  Or, you may look online for the distance equation from 
+	// a point to a line of given angle. 
+
+	8.2: min_i <-- determine which dist(p,ci) is minimum
+		
+	8.3: if min_i is not the same as p's old label change p's label to min_i
+		     And changeLabel set to true 
+
+step 9: repeat step 8 until all points in pointSet are process.
+Step 10: repeat step 3 to step 9 until no point changes its label.
+
+Step 11: Output the info of pointSet (x, y, lable) to Output-1 file.
+Step 12: closed all files
+
+
+
